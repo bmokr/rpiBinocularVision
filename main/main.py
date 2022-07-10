@@ -14,11 +14,6 @@ def run():
         new_frame_time = 0
         font = cv2.FONT_HERSHEY_SIMPLEX
 
-        #output file
-        f = open("measurment.txt", "a")
-        f.write("Distance" + "\tMeasurment\n")
-        f.close()
-        
         #cameras variables
         pixel_width = 720
         pixel_height = 480
@@ -28,7 +23,13 @@ def run():
         url1 = 'http://192.168.137.172:8081/shot.jpg'
         url2 = 'http://192.168.137.40:8080/shot.jpg'
         cam1 = 'redmiL'
-        cam2 = str(input("First left camera: 8081\nEnter second right camera <redmiR/rpi>: "))
+        cam2 = str(input("First left camera: 8081\nEnter second, right camera <redmiR/rpi>: "))
+        
+        #output file
+        f = open("measurment.txt", "a")
+        f.write("Parameters: " + cam1 + " " + cam2 + " Cameras distance: " + str(camera_separation) + "\n")
+        f.write("Distance" + "\tMeasurment\n")
+        f.close()
         
         #setup
         cL = pH.Camera_THR()
@@ -39,12 +40,14 @@ def run():
         cL.camName = cam1
         cL.cameraType = 'redmi'
         targeter1 = pH.Detection_Measurment()
+        targeter1.contour_max_area = int(input("Enter maximum percent of frame area of object(int): "))
         angle_width_1 = 68
         angle_height_1 = 46
         
         #right parameters
         cR.camName = cam2
         targeter2 = pH.Detection_Measurment()
+        targeter2.contour_max_area = targeter1.contour_max_area
         
         if cam2 == "redmiR":
             cR.cameraType = 'redmi'
@@ -159,7 +162,7 @@ def run():
                 
             elif key == ord('x'):
                 f = open("measurment.txt", "a")
-                f.write(str(D) + "\t" + str(input("Enter measurment: ") + "\n"))
+                f.write(str("{:.2f}".format(D)) + "\t\t" + str(input("Enter measurment: ") + "\n"))
                 f.close()
     
     except:
@@ -177,6 +180,9 @@ def run():
         pass
                 
     cv2.destroyAllWindows()
+    f = open("measurment.txt", "a")
+    f.write("********************************************\n \n")
+    f.close()
     exit(0)   
         
 if __name__ == "__main__":
